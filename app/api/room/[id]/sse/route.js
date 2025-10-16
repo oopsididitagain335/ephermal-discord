@@ -68,4 +68,17 @@ export async function GET(req, { params }) {
       }, 1200);
 
       const hb = setInterval(() => controller.enqueue(enc.encode(': ping\n\n')), 20000);
-      const close = () => { clearInterval(poll
+      const close = () => { clearInterval(poll); clearInterval(hb); cleanup(); controller.close(); };
+      if (req.socket) { req.socket.on('close', close); req.socket.on('error', close); }
+    },
+    cancel() { cleanup(); }
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    }
+  });
+}
