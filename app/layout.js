@@ -1,10 +1,24 @@
 // app/layout.js
-import { getAuthUserId } from '@/lib/auth';
+'use client';
 
-export default async function RootLayout({ children }) {
-  const userId = getAuthUserId(cookies());
-  if (!userId) {
-    return Response.redirect(new URL('/login', process.env.NEXT_PUBLIC_APP_URL));
-  }
-  return <html><body>{children}</body></html>;
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function RootLayout({ children }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = document.cookie.split('; ').find(row => row.startsWith('auth='));
+    if (!token) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  return (
+    <html lang="en">
+      <body style={{ margin: 0, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        {children}
+      </body>
+    </html>
+  );
 }
