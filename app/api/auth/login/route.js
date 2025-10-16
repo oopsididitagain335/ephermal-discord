@@ -24,4 +24,10 @@ export async function POST(request) {
     }
 
     const response = NextResponse.json({ success: true });
-    setAuthCookie(response, user._id.toString
+    setAuthCookie(response, user._id.toString());
+    return response;
+  } catch (error) {
+    console.error('Login error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
